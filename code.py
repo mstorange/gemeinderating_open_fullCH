@@ -53,6 +53,7 @@ if check_password():
     # nur jene Kantone, wovon mehrere Gemeinden vorkommen
     allekantone = data['Kanton'].value_counts()
     valid_kantone = allekantone[allekantone > 10].index.tolist()
+    valid_kantone = [i for i in valid_kantone if i not in ['GR', 'TI']]
 
     # wir wollen die Filtergrenzwerte nun basierend auf allen möglichen Kantonen, von denen wir schon Daten haben, bestimmen, damit es keine Löcher gibt, weil gewisse Gemeinden ausserhalb der Fitlerrange min und max liegen
     # machen wir unten direkt
