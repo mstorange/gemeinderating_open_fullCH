@@ -66,7 +66,7 @@ if check_password():
     gemeinden2d = gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
 
         # Gemeindegeometrien dazufügen
-    storedf_geo = fd.merge(right=gemeinden2d, left_on='BFS Gde-nummer',right_on='bfs_nummer', how='inner') # damit fliegen eheamlige Gemeinden raus
+    storedf_geo = data.merge(right=gemeinden2d, left_on='BFS Gde-nummer',right_on='bfs_nummer', how='inner') # damit fliegen eheamlige Gemeinden raus
     valid_gemeinden = storedf_geo['bfs_nummer'].tolist()
     data = data[data['BFS Gde-nummer'].isin(valid_gemeinden)].reset_index(drop=True)
         #st.write('Länge des merges:', len(storedf_geo))
