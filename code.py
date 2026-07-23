@@ -513,7 +513,7 @@ if check_password():
                'Bevölkerung (Prognose) ', 'Alterung (Prognose)    ',
                'Beschäftigte (Prognose)', 'Erreichbarkeit ÖV      ',
                'Erreichbarkeit MIV     ',
-               'Innenentw.-potenzial   ', 'Summe'], aliases=['Gemeinde', 'Mietpreis (70%-Q)','Mietpreis (Entwicklung)', 'Baulandpreis aktuell (mittlere Lage)', 'Baulandpreis (Entwicklung)', 'Bevölkerung (Prognose)','Alterung (Prognose)', 'Beschäftigung (Prognose)', 'Erreichbarkeit ÖV', 'Erreichbarkeit MIV', 'Innenentwicklung', 'Rating (Summe)'], labels=False, style="font-size:12px;", max_width=1200)
+               'Innenentw.-potenzial   ', 'Summe'], aliases=['Gemeinde', 'Mietpreis (70%-Q)','Mietpreis (Entwicklung)', 'STWE-Preis (aktuell)', 'STWE-Preis (Entwicklung)', 'Baulandpreis aktuell (mittlere Lage)', 'Baulandpreis (Entwicklung)', 'Bevölkerung (Prognose)','Alterung (Prognose)', 'Beschäftigung (Prognose)', 'Erreichbarkeit ÖV', 'Erreichbarkeit MIV', 'Innenentwicklung', 'Rating (Summe)'], labels=False, style="font-size:12px;", max_width=1200)
         
         
         # alles zusammen plotten
