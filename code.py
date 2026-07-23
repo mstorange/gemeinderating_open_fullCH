@@ -561,7 +561,7 @@ if check_password():
                   #"dashArray": "2, 2",
                   },
               # popup=htmlpopup,
-              tooltip=folium.GeoJsonTooltip(fields=['Gemeinde',columnname]), 
+              tooltip=folium.GeoJsonTooltip(fields=['Gemeindename',columnname]), 
               # popup_keep_highlighted=True
               ).add_to(folium.FeatureGroup(name=columnname, show=False).add_to(m))
           
