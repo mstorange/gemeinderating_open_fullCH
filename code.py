@@ -464,19 +464,21 @@ if check_password():
         df = storedf_geo.to_crs(epsg=4326)
 
         # filter nun anwenden --> hier weiter machen nach dem Mittag
+
+       
         
         #df = df[df['Wohnpreis (Miete, 70%-Q)']>=slider_miete1].reset_index(drop=True)
         df = df[(df['Mietpreis (70%-Q)']>=slider_miete1[0])&(df['Mietpreis (70%-Q)']<=slider_miete1[1])].reset_index(drop=True)
         #df = df[df['Wohnpreis Miete vgl. zu Region (70%-Q)']>=slider_miete2].reset_index(drop=True)
         #df = df[(df['Wohnpreis Miete vgl. zu Region (70%-Q)']>=slider_miete2[0])&(df['Wohnpreis Miete vgl. zu Region (70%-Q)']<=slider_miete2[1])].reset_index(drop=True)
         #df = df[df['Wohnpreis Entwicklung seit 2023 (70%-Q)']>=slider_miete3].reset_index(drop=True)
-        df = df[(df['Mietpreis Entwicklung seit 2021 (70%-Q)']>=slider_miete3[0])&(df['Mietpreis Entwicklung seit 2021 (70%-Q)']<=slider_miete3[1])].reset_index(drop=True)
+        df = df[(df['Mietpreis-Entwicklung seit 2021 (70%-Q)']>=slider_miete3[0])&(df['Mietpreis-Entwicklung seit 2021 (70%-Q)']<=slider_miete3[1])].reset_index(drop=True)
         df = df[(df['STWE-Preis (70%-Q)']>=slider_stwe1[0])&(df['STWE-Preis (70%-Q)']<=slider_stwe1[1])].reset_index(drop=True)
-        df = df[(df['STWE-Preis Entwicklung seit 2021 (70%-Q)']>=slider_stwe2[0])&(df['STWE-Preis Entwicklung seit 2021 (70%-Q)']<=slider_stwe2[1])].reset_index(drop=True)
+        df = df[(df['STWE-Entwicklung seit 2021 (70%-Q)']>=slider_stwe2[0])&(df['STWE-Entwicklung seit 2021 (70%-Q)']<=slider_stwe2[1])].reset_index(drop=True)
         #df = df[df['Baulandpreis aktuell (50%-Q)']<=slider_land1]
         df = df[(df['Baulandpreis aktuell (mittlere Lage)']>=slider_land1[0])&(df['Baulandpreis aktuell (mittlere Lage)']<=slider_land1[1])].reset_index(drop=True)
         #df = df[df['Baulandpreis Entwicklung seit 2020']<=slider_land2]
-        df = df[(df['Baulandpreis Entwicklung seit 2020']>=slider_land2[0])&(df['Baulandpreis Entwicklung seit 2019']<=slider_land2[1])].reset_index(drop=True)
+        df = df[(df['Baulandpreis-Entwicklung seit 2019']>=slider_land2[0])&(df['Baulandpreis-Entwicklung seit 2019']<=slider_land2[1])].reset_index(drop=True)
         df = df[(df['Bevölkerung Prognose bis 2035']>=slider_bev[0])&(df['Bevölkerung Prognose bis 2035']<=slider_bev[1])].reset_index(drop=True)
         df = df[(df['Alterung Prognose bis 2035 (Anteil Ü65)']>=slider_alterung[0])&(df['Alterung Prognose bis 2035 (Anteil Ü65)']<=slider_alterung[1])].reset_index(drop=True)
         df = df[(df['Beschäftigte Prognose bis 2035']>=slider_beschäftigte[0])&(df['Beschäftigte Prognose bis 2035']<=slider_beschäftigte[1])].reset_index(drop=True)
