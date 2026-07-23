@@ -57,6 +57,21 @@ if check_password():
 
     # wir wollen die Filtergrenzwerte nun basierend auf allen möglichen Kantonen, von denen wir schon Daten haben, bestimmen, damit es keine Löcher gibt, weil gewisse Gemeinden ausserhalb der Fitlerrange min und max liegen
     # machen wir unten direkt
+
+    # Gemeinden georeferenzieren --> es sollen nur jene Gemeinden in data bleiben, die auch georeferenziert werden können (7 Gemeinden können nicht, weil sie nicht mehr eigenständig sind --> diese rausnehmen aus den WP-Daten: Fétigny, Halten, Moutier, Ménières, Oekingen, Ulmiz, Villnachern
+    gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.gpkg')
+        
+    # warum auch immer sind hier auch deutsche, italienische, etc. Polygone drin haha, diese nehmen wir raus, sie haben die BFS-NR 0
+    gemeinden2d = gemeinden2d[gemeinden2d['bfs_nummer']!=0].reset_index(drop=True)
+    gemeinden2d = gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
+
+        # Gemeindegeometrien dazufügen
+    storedf_geo = fd.merge(right=gemeinden2d, left_on='BFS Gde-nummer',right_on='bfs_nummer', how='inner') # damit fliegen eheamlige Gemeinden raus
+    valid_gemeinden = storedf_geo['bfs_nummer'].tolist()
+    data = data[data['BFS Gde-nummer'].isin(valid_gemeinden)].reset_index(drop=True)
+        #st.write('Länge des merges:', len(storedf_geo))
+        #st.write('Hier gemeinden2d.empty testen:', gemeinden2d.empty)
+    storedf_geo = gpd.GeoDataFrame(storedf_geo, crs='EPSG:2056', geometry='geometry')
     
     
     with st.form("filter_form"):
@@ -342,26 +357,7 @@ if check_password():
         
         
         
-        # Gemeinden georeferenzieren
-        gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.gpkg')
-        
-        
-        
-        
-        # warum auch immer sind hier auch deutsche, italienische, etc. Polygone drin haha, diese nehmen wir raus, sie haben die BFS-NR 0
-        gemeinden2d = gemeinden2d[gemeinden2d['bfs_nummer']!=0].reset_index(drop=True)
-        gemeinden2d = gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
-        gemeinden2d = gemeinden2d.replace('Fétigny-Ménières', 'Fétigny')
-        ##st.write('Welche Spalten hat gemeinden2d?')
-        #st.write(gemeinden2d.columns)
-        #st.write('Welche Spalten hat fd?')
-        #st.write(fd.columns)
-        
-        # Gemeindegeometrien dazufügen
-        storedf_geo = fd.merge(right=gemeinden2d, left_on='BFS Gde-nummer',right_on='bfs_nummer', how='inner') # damit fliegen eheamlige Gemeinden raus
-        #st.write('Länge des merges:', len(storedf_geo))
-        #st.write('Hier gemeinden2d.empty testen:', gemeinden2d.empty)
-        storedf_geo = gpd.GeoDataFrame(storedf_geo, crs='EPSG:2056', geometry='geometry')
+
         
         # critical for streamlit
         # storedf_geo = storedf_geo[storedf_geo.geometry.notna()].copy()
