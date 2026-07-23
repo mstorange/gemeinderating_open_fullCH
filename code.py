@@ -97,7 +97,7 @@ if check_password():
             slider_err_öv = st.slider(label="Erreichbarkeit Personen & Beschäftigte ÖV (30 Min.-Umkreis)", min_value=data['Erreichbarkeit ÖV      '].min()-10000.0, max_value=data['Erreichbarkeit ÖV      '].max()+10000.0, step=10000.0, value=(data['Erreichbarkeit ÖV      '].min()-10000.0, data['Erreichbarkeit ÖV      '].max()+10000.0))
             slider_err_miv = st.slider(label="Erreichbarkeit Pesonen & Beschäftigte MIV (30 Min.-Umkreis)", min_value=data['Erreichbarkeit MIV     '].min()-100000.0, max_value=data['Erreichbarkeit MIV     '].max()+100000.0, step=100000.0, value=(data['Erreichbarkeit MIV     '].min()-100000.0, data['Erreichbarkeit MIV     '].max()+100000.0))
             #slider_steuern = st.slider(label="Steuern DINKs (Mittelwert über alle Einkommensklassen)", min_value=data['Steuern_DINKs          '].min()-0.05, max_value=data['Steuern_DINKs          '].max()+0.05, step=0.05, value=(data['Steuern_DINKs          '].min()-0.05, data['Steuern_DINKs          '].max()+0.05))
-            slider_innen = st.slider(label="Innenentwicklungspotenzial (Sotomo/Urbanistica)", min_value=data['Innenentw.-potenzial   '].min()-0.1, max_value=data['Innenentwicklungspotenzial'].max()+0.1, step=0.1, value=(data['Innenentwicklungspotenzial'].min()-0.1, data['Innenentwicklungspotenzial'].max()+0.1))
+            slider_innen = st.slider(label="Innenentwicklungspotenzial (Sotomo/Urbanistica)", min_value=data['Innenentw.-potenzial   '].min()-0.1, max_value=data['Innenentw.-potenzial   '].max()+0.1, step=0.1, value=(data['Innenentw.-potenzial   '].min()-0.1, data['Innenentw.-potenzial   '].max()+0.1))
     
         submitted = st.form_submit_button("Anwenden")
     
