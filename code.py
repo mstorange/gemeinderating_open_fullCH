@@ -358,7 +358,7 @@ if check_password():
         #st.write(fd.columns)
         
         # Gemeindegeometrien dazufügen
-        storedf_geo = fd.merge(right=gemeinden2d, left_on='Gemeindename',right_on='name', how='left')
+        storedf_geo = fd.merge(right=gemeinden2d, left_on='BFS Gde-nummer',right_on='bfs_nummer', how='inner') # damit fliegen eheamlige Gemeinden raus
         #st.write('Länge des merges:', len(storedf_geo))
         #st.write('Hier gemeinden2d.empty testen:', gemeinden2d.empty)
         storedf_geo = gpd.GeoDataFrame(storedf_geo, crs='EPSG:2056', geometry='geometry')
