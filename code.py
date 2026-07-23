@@ -507,8 +507,8 @@ if check_password():
         m = folium.Map(location=[firstobject.y, firstobject.x], zoom_start=10, tiles=satellite, zoom_control=False) # CartoDB dark_matter, positron, voyager
         
         
-        hoverinfo = folium.GeoJsonTooltip(fields=['NAME','Wohnpreis (aktuell)    ', 'Baulandpreis (aktuell) ', 'Summe1'], aliases=['Gemeinde','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Rating'])
-        htmlpopup = folium.GeoJsonPopup(fields=['Gemeinde','Wohnpreis (aktuell)    ', 'Wohnpreis (Entwicklung)', 'STWE-Preis (aktuell)   ',  'STWE-Preis (Entw.)     ',
+        hoverinfo = folium.GeoJsonTooltip(fields=['Gemeindename','Wohnpreis (aktuell)    ', 'Baulandpreis (aktuell) ', 'Summe1'], aliases=['Gemeinde','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Rating'])
+        htmlpopup = folium.GeoJsonPopup(fields=['Gemeindename','Wohnpreis (aktuell)    ', 'Wohnpreis (Entwicklung)', 'STWE-Preis (aktuell)   ',  'STWE-Preis (Entw.)     ',
                'Baulandpreis (aktuell) ', 'Baulandpreis (Entw.)   ',
                'Bevölkerung (Prognose) ', 'Alterung (Prognose)    ',
                'Beschäftigte (Prognose)', 'Erreichbarkeit ÖV      ',
@@ -540,7 +540,7 @@ if check_password():
         for _, row in df.iterrows(): # _ is a convention to tell the user that we don't need this value and it's only there since iterrow requires such a value
             centroid = row['geometry'].centroid
             value = row['Summe1']
-            name = row['Gemeinde']
+            name = row['Gemeindename']
             folium.Marker(
                 location=[centroid.y, centroid.x],
                 icon=folium.DivIcon(html=f'<div style="font-size: 9px; color: white;">{name}<br>{value}</div>')
