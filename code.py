@@ -523,7 +523,7 @@ if check_password():
         fg_summe_marker = folium.FeatureGroup(name='Attraktivität Summe', show=True).add_to(m)
         for _, row in df.iterrows(): # _ is a convention to tell the user that we don't need this value and it's only there since iterrow requires such a value
             name = row['Gemeindename']
-            if pd.isna(row['geometry']:
+            if pd.isna(row['geometry']):
                 print(name)
             centroid = row['geometry'].centroid
             value = row['Summe1']
