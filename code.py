@@ -87,7 +87,7 @@ if check_password():
             slider_miete1 = st.slider(label="Mietzins (70%-Q.)", min_value=data['Wohnpreis (aktuell)    '].min()-1, max_value=data['Wohnpreis (aktuell)    '].max()+1, step=10, value=(data['Wohnpreis (aktuell)    '].min()-1, data['Wohnpreis (aktuell)    '].max()+1))
             #slider_miete2 = st.slider(label="Mietzins-Verhältnis vgl. zu Region min (70%-Q.)", min_value=data['Wohnpreis (vgl. Region)'].min()-0.1, max_value=data['Wohnpreis (vgl. Region)'].max()+0.1, step=0.1, value=(data['Wohnpreis (vgl. Region)'].min()-0.1, data['Wohnpreis (vgl. Region)'].max()+0.1))
             slider_miete3 = st.slider(label="Mietzins-Entwicklung seit 2021 (70%-Q.)", min_value=data['Wohnpreis (Entwicklung)'].min()-0.1, max_value=data['Wohnpreis (Entwicklung)'].max()+0.1, step=0.1, value=(data['Wohnpreis (Entwicklung)'].min()-0.1, data['Wohnpreis (Entwicklung)'].max()+0.1))
-            slider_stwe1= st.slider(label="STWE-Preis (70%-Q.)", min_value=data['STWE-Preis (aktuell)     '].min()-1, max_value=data['STWE-Preis (aktuell)     '].max()+1, step=10, value=(data['STWE-Preis (aktuell)     '].min()-1, data['STWE-Preis (aktuell)     '].max()+1))
+            slider_stwe1= st.slider(label="STWE-Preis (70%-Q.)", min_value=data['STWE-Preis (aktuell)   '].min()-1, max_value=data['STWE-Preis (aktuell)   '].max()+1, step=10, value=(data['STWE-Preis (aktuell)   '].min()-1, data['STWE-Preis (aktuell)   '].max()+1))
             slider_stwe2 = st.slider(label="STWE-Entwicklung seit 2021 (70%-Q.)", min_value=data['STWE-Preis (Entwicklung) '].min()-0.1, max_value=data['STWE-Preis (Entw.)     '].max()+0.1, step=0.1, value=(data['STWE-Preis (Entwicklung) '].min()-0.1, data['STWE-Preis (Entwicklung) '].max()+0.1))
             slider_land1 = st.slider(label="Baulandpreis (mittlere Lage)", min_value=data['Baulandpreis (aktuell) '].min()-50, max_value=data['Baulandpreis (aktuell) '].max()+50, step=50, value=(data['Baulandpreis (aktuell) '].min()-50, data['Baulandpreis (aktuell) '].max()+50))
             slider_land2 = st.slider(label="Baulandpreis-Entwicklung (Verhältnis zu 2019, mittlere Lage)", min_value=data['Baulandpreis (Entw.)   '].min()-0.1, max_value=data['Baulandpreis (Entw.)   '].max()+0.1, step=0.1, value=(data['Baulandpreis (Entw.)   '].min()-0.1, data['Baulandpreis (Entw.)   '].max()+0.1))
@@ -114,7 +114,7 @@ if check_password():
         #fd['Baulandpreis (50%-Q)'] = fd['Baulandpreis (aktuell) ']*1
         #fd['Wohnpreis Miete vgl. zu Region (70%-Q)'] = fd['Wohnpreis (vgl. Region)']*1
         fd['Mietpreis-Entwicklung seit 2021 (70%-Q)'] = fd['Wohnpreis (Entwicklung)']*1
-        fd['STWE-Preis (70%-Q)'] = fd['STWE-Preis (aktuell)     ']*1
+        fd['STWE-Preis (70%-Q)'] = fd['STWE-Preis (aktuell)   ']*1
         fd['STWE-Entwicklung seit 2021 (70%-Q)'] = fd['STWE-Preis (Entw.)     ']*1
         fd['Baulandpreis aktuell (mittlere Lage)'] = fd['Baulandpreis (aktuell) ']*1
         fd['Baulandpreis-Entwicklung seit 2019'] = fd['Baulandpreis (Entw.)   ']*1
@@ -167,15 +167,15 @@ if check_password():
         fd['Wohnpreis (Entwicklung)'] = wertnorm_liste
 
         # STWE-Preise
-        wertmin, wertmax = fd['STWE-Preis (aktuell)     '].min(), fd['STWE-Preis (aktuell)     '].max()
+        wertmin, wertmax = fd['STWE-Preis (aktuell)   '].min(), fd['STWE-Preis (aktuell)   '].max()
         
         wertnorm_liste = []
         
-        for w_o in fd['STWE-Preis (aktuell)     '].tolist():
+        for w_o in fd['STWE-Preis (aktuell)   '].tolist():
             wert_norm = (w_o-wertmin)/(wertmax-wertmin)
             wertnorm_liste.append(wert_norm)
         
-        fd['STWE-Preis (aktuell)     '] = wertnorm_liste
+        fd['STWE-Preis (aktuell)   '] = wertnorm_liste
 
         # STWE-Preise Entwicklung
         wertmin, wertmax = fd['STWE-Preis (Entwicklung) '].min(), fd['STWE-Preis (Entwicklung) '].max()
