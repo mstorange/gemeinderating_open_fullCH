@@ -335,7 +335,7 @@ if check_password():
         #g = [1.5, 1, 1.25, 1.5, 1, 1.25, 1, 1, 1.25, 1.25, 1, 1]
 
         
-        fd['Summe1'] = g_0*fd['Wohnpreis (aktuell)    ']+g_2*fd['Wohnpreis (Entwicklung)']+g_2b['STWE-Preis (aktuell)   ']+g_2c['STWE-Preis (Entw.)     ']+g_3*fd['Baulandpreis (aktuell) ']+g_4*fd['Baulandpreis (Entw.)   ']+g_5*fd['Bevölkerung (Prognose) ']+g_6*fd['Alterung (Prognose)    ']+g_7*fd['Beschäftigte (Prognose)']+g_8*fd['Erreichbarkeit ÖV      ']+g_9*fd['Erreichbarkeit MIV     ']+g_11*fd['Innenentw.-potenzial   ']
+        fd['Summe1'] = g_0*fd['Wohnpreis (aktuell)    ']+g_2*fd['Wohnpreis (Entwicklung)']+g_2b*fd['STWE-Preis (aktuell)   ']+g_2c*fd['STWE-Preis (Entw.)     ']+g_3*fd['Baulandpreis (aktuell) ']+g_4*fd['Baulandpreis (Entw.)   ']+g_5*fd['Bevölkerung (Prognose) ']+g_6*fd['Alterung (Prognose)    ']+g_7*fd['Beschäftigte (Prognose)']+g_8*fd['Erreichbarkeit ÖV      ']+g_9*fd['Erreichbarkeit MIV     ']+g_10*fd['Innenentw.-potenzial   ']
         # hier auf keinen Fall sortieren, weil sonst Dataframe ergänzgen falsch wird fd = fd.sort_values(by='Gemeinde', ascending=True)
         fd = fd.round(2)
         
