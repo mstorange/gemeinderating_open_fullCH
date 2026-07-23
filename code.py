@@ -34,7 +34,7 @@ def check_password():
 if check_password():
     
     st.title('Gemeinderating von CAJ/MST')
-    st.write('Die Karte gibt erste Anhaltspunkte zur Attraktivität einer Gemeinde aus Investorenperspektive. Alle Gemeinden der ausgewählten Kantone werden hierzu miteinander verglichen. Als Datenbasis gelten WP-Berichte sowie die im Herbst 2025 publizierte Studie von Urbanistica & Sotomo zum Innenentwicklungspotenzial von Schweizer Gemeinden. Wie immer sind diese Daten mit Vorsicht zu geniessen, weil wir nicht wissen, wie sie erhoben und prozessiert wurden.')
+    st.write('Die Karte gibt erste Anhaltspunkte zur Attraktivität einer Gemeinde aus Investorenperspektive. Alle Gemeinden der ausgewählten Kantone werden hierzu miteinander verglichen. Als Datenbasis gelten WP-Daten sowie die im Herbst 2025 publizierte Studie von Urbanistica & Sotomo zum Innenentwicklungspotenzial von Schweizer Gemeinden. Wie immer sind diese Daten mit Vorsicht zu geniessen, weil wir nicht wissen, wie sie erhoben und prozessiert wurden.')
     
     # --- session state init ---
     if "applied" not in st.session_state:
@@ -68,8 +68,10 @@ if check_password():
         st.write("Gewichte selbst definieren. Falls nichts geändert, wird LM-Gewichtung genommen, falls Gewicht 0 -> Kriterium wird ignoriert.")
         with st.expander("Gewichte aufklappen", expanded=False):
             g_0 = st.number_input("Wohnpreis Miete 70%-Q: ", value=1.5, placeholder="Default: 1.5")
-            g_1 = st.number_input("Wohnpreis (Region): ", value=1, placeholder="Default: 1")
+            #g_1 = st.number_input("Wohnpreis (Region): ", value=1, placeholder="Default: 1")
             g_2 = st.number_input("Wohnpreis (Entwicklung): ", value=1.25, placeholder="Default: 1.25")
+            g_2b = st.number_input("STWE-Preis (aktuell): ", value=1, placeholder="Default: 1")
+            g_2c = st.number_input("STWE-Preis (Entwicklung): ", value=1, placeholder="Default: 1")
             g_3 = st.number_input("Baulandpreis (aktuell): ", value=1.5, placeholder="Default: 1.5")
             g_4 = st.number_input("Baulandpreis (Entwicklung): ", value=1, placeholder="Default: 1")
             g_5 = st.number_input("Bevölkerung (Prognose): ", value=1.25, placeholder="Default: 1.25")
@@ -78,22 +80,24 @@ if check_password():
             g_8 = st.number_input("Erreichbarkeit ÖV: ", value=1.25, placeholder="Default: 1.25")
             g_9 = st.number_input("Erreichbartkeit MIV: ", value=1.25, placeholder="Default: 1.25")
             g_10 = st.number_input("Innenentwicklungspotenzial: ", value=1, placeholder="Default: 1")
-            g_11 = st.number_input("Steuern DINKs: ", value=1, placeholder="Default: 1")
+            #g_11 = st.number_input("Steuern DINKs: ", value=1, placeholder="Default: 1")
 
         with st.expander("Filter setzen (bspw. nur alle Gemeinden mit Mietpreisen > 250 CHF/m2 einblenden)", expanded=False):
             # Werte aus WP-Berichte_App.ipynb vom concat der Kantone SG, TG, LU, ZG, AG
             slider_miete1 = st.slider(label="Mietzins (70%-Q.)", min_value=data['Wohnpreis (aktuell)    '].min()-1, max_value=data['Wohnpreis (aktuell)    '].max()+1, step=10, value=(data['Wohnpreis (aktuell)    '].min()-1, data['Wohnpreis (aktuell)    '].max()+1))
-            slider_miete2 = st.slider(label="Mietzins-Verhältnis vgl. zu Region min (70%-Q.)", min_value=data['Wohnpreis (vgl. Region)'].min()-0.1, max_value=data['Wohnpreis (vgl. Region)'].max()+0.1, step=0.1, value=(data['Wohnpreis (vgl. Region)'].min()-0.1, data['Wohnpreis (vgl. Region)'].max()+0.1))
-            slider_miete3 = st.slider(label="Mietzins-Entwicklung seit 2023 (70%-Q.)", min_value=data['Wohnpreis (Entwicklung)'].min()-0.1, max_value=data['Wohnpreis (Entwicklung)'].max()+0.1, step=0.1, value=(data['Wohnpreis (Entwicklung)'].min()-0.1, data['Wohnpreis (Entwicklung)'].max()+0.1))
-            slider_land1 = st.slider(label="Baulandpreis (50%-Q.)", min_value=data['Baulandpreis (aktuell) '].min()-50, max_value=data['Baulandpreis (aktuell) '].max()+50, step=50, value=(data['Baulandpreis (aktuell) '].min()-50, data['Baulandpreis (aktuell) '].max()+50))
-            slider_land2 = st.slider(label="Baulandpreis-Entwicklung (Verhältnis zu 2020, 50%-Q.)", min_value=data['Baulandpreis (Entw.)   '].min()-0.1, max_value=data['Baulandpreis (Entw.)   '].max()+0.1, step=0.1, value=(data['Baulandpreis (Entw.)   '].min()-0.1, data['Baulandpreis (Entw.)   '].max()+0.1))
-            slider_bev = st.slider(label="Bevölkerung Prognose (Verhältnis zu 2055)", min_value=data['Bevölkerung (Prognose) '].min()-10.0, max_value=data['Bevölkerung (Prognose) '].max()+10.0, step=10.0, value=(data['Bevölkerung (Prognose) '].min()-10, data['Bevölkerung (Prognose) '].max()+10))
-            slider_alterung = st.slider(label="Alterung Prognose (Anteil Ü50, Verhältnis zu 2045)", min_value=data['Alterung (Prognose)    '].min()-0.1, max_value=data['Alterung (Prognose)    '].max()+0.1, step=0.1, value=(data['Alterung (Prognose)    '].min()-0.1, data['Alterung (Prognose)    '].max()+0.1))
-            slider_beschäftigte = st.slider(label="Beschäftigte Prognose (Verhältnis zu 2050)", min_value=data['Beschäftigte (Prognose)'].min()-0.1, max_value=data['Beschäftigte (Prognose)'].max()+0.1, step=0.1, value=(data['Beschäftigte (Prognose)'].min()-0.1, data['Beschäftigte (Prognose)'].max()+0.1))
-            slider_err_öv = st.slider(label="Erreichbarkeit ÖV (50 Min.-Umkreis)", min_value=data['Erreichbarkeit ÖV      '].min()-10000, max_value=data['Erreichbarkeit ÖV      '].max()+10000, step=10000, value=(data['Erreichbarkeit ÖV      '].min()-10000, data['Erreichbarkeit ÖV      '].max()+10000))
-            slider_err_miv = st.slider(label="Erreichbarkeit MIV (50 Min.-Umkreis)", min_value=data['Erreichbarkeit MIV     '].min()-100000, max_value=data['Erreichbarkeit MIV     '].max()+100000, step=100000, value=(data['Erreichbarkeit MIV     '].min()-100000, data['Erreichbarkeit MIV     '].max()+100000))
-            slider_steuern = st.slider(label="Steuern DINKs (Mittelwert über alle Einkommensklassen)", min_value=data['Steuern_DINKs          '].min()-0.05, max_value=data['Steuern_DINKs          '].max()+0.05, step=0.05, value=(data['Steuern_DINKs          '].min()-0.05, data['Steuern_DINKs          '].max()+0.05))
-            slider_innen = st.slider(label="Innenentwicklungspotenzial (Sotomo/Urbanistica)", min_value=data['Innenentwicklungspotenzial'].min()-0.1, max_value=data['Innenentwicklungspotenzial'].max()+0.1, step=0.1, value=(data['Innenentwicklungspotenzial'].min()-0.1, data['Innenentwicklungspotenzial'].max()+0.1))
+            #slider_miete2 = st.slider(label="Mietzins-Verhältnis vgl. zu Region min (70%-Q.)", min_value=data['Wohnpreis (vgl. Region)'].min()-0.1, max_value=data['Wohnpreis (vgl. Region)'].max()+0.1, step=0.1, value=(data['Wohnpreis (vgl. Region)'].min()-0.1, data['Wohnpreis (vgl. Region)'].max()+0.1))
+            slider_miete3 = st.slider(label="Mietzins-Entwicklung seit 2021 (70%-Q.)", min_value=data['Wohnpreis (Entwicklung)'].min()-0.1, max_value=data['Wohnpreis (Entwicklung)'].max()+0.1, step=0.1, value=(data['Wohnpreis (Entwicklung)'].min()-0.1, data['Wohnpreis (Entwicklung)'].max()+0.1))
+            slider_stwe1= st.slider(label="STWE-Preis (70%-Q.)", min_value=data['STWE-Preis (aktuell)     '].min()-1, max_value=data['STWE-Preis (aktuell)     '].max()+1, step=10, value=(data['STWE-Preis (aktuell)     '].min()-1, data['STWE-Preis (aktuell)     '].max()+1))
+            slider_stwe2 = st.slider(label="STWE-Entwicklung seit 2021 (70%-Q.)", min_value=data['STWE-Preis (Entwicklung) '].min()-0.1, max_value=data['STWE-Preis (Entw.)     '].max()+0.1, step=0.1, value=(data['STWE-Preis (Entwicklung) '].min()-0.1, data['STWE-Preis (Entwicklung) '].max()+0.1))
+            slider_land1 = st.slider(label="Baulandpreis (mittlere Lage)", min_value=data['Baulandpreis (aktuell) '].min()-50, max_value=data['Baulandpreis (aktuell) '].max()+50, step=50, value=(data['Baulandpreis (aktuell) '].min()-50, data['Baulandpreis (aktuell) '].max()+50))
+            slider_land2 = st.slider(label="Baulandpreis-Entwicklung (Verhältnis zu 2019, mittlere Lage)", min_value=data['Baulandpreis (Entw.)   '].min()-0.1, max_value=data['Baulandpreis (Entw.)   '].max()+0.1, step=0.1, value=(data['Baulandpreis (Entw.)   '].min()-0.1, data['Baulandpreis (Entw.)   '].max()+0.1))
+            slider_bev = st.slider(label="Bevölkerung Prognose (Verhältnis 2024 zu 2035)", min_value=data['Bevölkerung (Prognose) '].min()-10.0, max_value=data['Bevölkerung (Prognose) '].max()+10.0, step=10.0, value=(data['Bevölkerung (Prognose) '].min()-10, data['Bevölkerung (Prognose) '].max()+10))
+            slider_alterung = st.slider(label="Alterung Prognose (Anteil Ü65, Verhältnis 2024 zu 2035)", min_value=data['Alterung (Prognose)    '].min()-0.1, max_value=data['Alterung (Prognose)    '].max()+0.1, step=0.1, value=(data['Alterung (Prognose)    '].min()-0.1, data['Alterung (Prognose)    '].max()+0.1))
+            slider_beschäftigte = st.slider(label="Beschäftigte Prognose (Verhältnis 2024 zu 2035)", min_value=data['Beschäftigte (Prognose)'].min()-0.1, max_value=data['Beschäftigte (Prognose)'].max()+0.1, step=0.1, value=(data['Beschäftigte (Prognose)'].min()-0.1, data['Beschäftigte (Prognose)'].max()+0.1))
+            slider_err_öv = st.slider(label="Erreichbarkeit Personen & Beschäftigte ÖV (30 Min.-Umkreis)", min_value=data['Erreichbarkeit ÖV      '].min()-10000, max_value=data['Erreichbarkeit ÖV      '].max()+10000, step=10000, value=(data['Erreichbarkeit ÖV      '].min()-10000, data['Erreichbarkeit ÖV      '].max()+10000))
+            slider_err_miv = st.slider(label="Erreichbarkeit Pesonen & Beschäftigte MIV (30 Min.-Umkreis)", min_value=data['Erreichbarkeit MIV     '].min()-100000, max_value=data['Erreichbarkeit MIV     '].max()+100000, step=100000, value=(data['Erreichbarkeit MIV     '].min()-100000, data['Erreichbarkeit MIV     '].max()+100000))
+            #slider_steuern = st.slider(label="Steuern DINKs (Mittelwert über alle Einkommensklassen)", min_value=data['Steuern_DINKs          '].min()-0.05, max_value=data['Steuern_DINKs          '].max()+0.05, step=0.05, value=(data['Steuern_DINKs          '].min()-0.05, data['Steuern_DINKs          '].max()+0.05))
+            slider_innen = st.slider(label="Innenentwicklungspotenzial (Sotomo/Urbanistica)", min_value=data['Innenentw.-potenzial   '].min()-0.1, max_value=data['Innenentwicklungspotenzial'].max()+0.1, step=0.1, value=(data['Innenentwicklungspotenzial'].min()-0.1, data['Innenentwicklungspotenzial'].max()+0.1))
     
         submitted = st.form_submit_button("Anwenden")
     
@@ -106,19 +110,21 @@ if check_password():
         fd = data[data["Kanton"].isin(st.session_state.selected_cantons)].reset_index(drop=True)
 
         # für die Slider: absolute Werte ergänzen
-        fd['Wohnpreis (Miete, 70%-Q)'] = fd['Wohnpreis (aktuell)    ']*1
+        fd['Mietpreis (70%-Q)'] = fd['Wohnpreis (aktuell)    ']*1
         #fd['Baulandpreis (50%-Q)'] = fd['Baulandpreis (aktuell) ']*1
-        fd['Wohnpreis Miete vgl. zu Region (70%-Q)'] = fd['Wohnpreis (vgl. Region)']*1
-        fd['Wohnpreis Entwicklung seit 2023 (70%-Q)'] = fd['Wohnpreis (Entwicklung)']*1
-        fd['Baulandpreis aktuell (50%-Q)'] = fd['Baulandpreis (aktuell) ']*1
-        fd['Baulandpreis Entwicklung seit 2020'] = fd['Baulandpreis (Entw.)   ']*1
-        fd['Bevölkerung Prognose bis 2055'] = fd['Bevölkerung (Prognose) ']*1
-        fd['Alterung Prognose bis 2045 (Anteil Ü50)'] = fd['Alterung (Prognose)    ']*1
-        fd['Beschäftigte Prognose bis 2050'] = fd['Beschäftigte (Prognose)']*1
-        fd['Erreichbarkeit ÖV (50 Min.)'] = fd['Erreichbarkeit ÖV      ']*1
-        fd['Erreichbarkeit MIV (50 Min.)'] = fd['Erreichbarkeit MIV     ']*1
-        fd['Steuern DINKs (Avg. Einkommen)'] = fd['Steuern_DINKs          ']*1
-        fd['Innenentwicklungspotenzial Sotomo/Urbanistica'] = fd['Innenentwicklungspotenzial']*1
+        #fd['Wohnpreis Miete vgl. zu Region (70%-Q)'] = fd['Wohnpreis (vgl. Region)']*1
+        fd['Mietpreis-Entwicklung seit 2021 (70%-Q)'] = fd['Wohnpreis (Entwicklung)']*1
+        fd['STWE-Preis (70%-Q)'] = fd['STWE-Preis (aktuell)     ']*1
+        fd['STWE-Entwicklung seit 2021 (70%-Q)'] = fd['STWE-Preis (Entw.)     ']*1
+        fd['Baulandpreis aktuell (mittlere Lage)'] = fd['Baulandpreis (aktuell) ']*1
+        fd['Baulandpreis-Entwicklung seit 2019'] = fd['Baulandpreis (Entw.)   ']*1
+        fd['Bevölkerung Prognose bis 2035'] = fd['Bevölkerung (Prognose) ']*1
+        fd['Alterung Prognose bis 2035 (Anteil Ü65)'] = fd['Alterung (Prognose)    ']*1
+        fd['Beschäftigte Prognose bis 2035'] = fd['Beschäftigte (Prognose)']*1
+        fd['Erreichbarkeit ÖV (30 Min.)'] = fd['Erreichbarkeit ÖV      ']*1
+        fd['Erreichbarkeit MIV (30 Min.)'] = fd['Erreichbarkeit MIV     ']*1
+        #fd['Steuern DINKs (Avg. Einkommen)'] = fd['Steuern_DINKs          ']*1
+        fd['Innenentwicklungspotenzial Sotomo/Urbanistica'] = fd['Innenentw.-potenzial   ']*1
 
         # wenn wir die slider hier anwenden, dann werden zuerst die Dinge rausgeworfen und dann die verbleibenden miteinander verglichen -> wollen wir nicht
         # fd = fd[fd['Wohnpreis (Miete, 70%-Q)']>=slider_miete1].reset_index(drop=True)
@@ -135,17 +141,17 @@ if check_password():
         fd['Wohnpreis (aktuell)    '] = wertnorm_liste
         
         # Wohnpreise Region
-        wertmin, wertmax = fd['Wohnpreis (vgl. Region)'].min(), fd['Wohnpreis (vgl. Region)'].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
+        #wertmin, wertmax = fd['Wohnpreis (vgl. Region)'].min(), fd['Wohnpreis (vgl. Region)'].max()
+        #print(f"==>> wertmin: {wertmin}")
+        #print(f"==>> wertmax: {wertmax}")
         
-        wertnorm_liste = []
+        #wertnorm_liste = []
         
-        for w_o in fd['Wohnpreis (vgl. Region)'].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            wertnorm_liste.append(wert_norm)
+        #for w_o in fd['Wohnpreis (vgl. Region)'].tolist():
+            #wert_norm = (w_o-wertmin)/(wertmax-wertmin)
+            #wertnorm_liste.append(wert_norm)
         
-        fd['Wohnpreis (vgl. Region)'] = wertnorm_liste
+        #fd['Wohnpreis (vgl. Region)'] = wertnorm_liste
         
         # Wohnpreise Entwicklung
         wertmin, wertmax = fd['Wohnpreis (Entwicklung)'].min(), fd['Wohnpreis (Entwicklung)'].max()
@@ -159,6 +165,30 @@ if check_password():
             wertnorm_liste.append(wert_norm)
         
         fd['Wohnpreis (Entwicklung)'] = wertnorm_liste
+
+        # STWE-Preise
+        wertmin, wertmax = fd['STWE-Preis (aktuell)     '].min(), fd['STWE-Preis (aktuell)     '].max()
+        
+        wertnorm_liste = []
+        
+        for w_o in fd['STWE-Preis (aktuell)     '].tolist():
+            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
+            wertnorm_liste.append(wert_norm)
+        
+        fd['STWE-Preis (aktuell)     '] = wertnorm_liste
+
+        # STWE-Preise Entwicklung
+        wertmin, wertmax = fd['STWE-Preis (Entwicklung) '].min(), fd['STWE-Preis (Entwicklung) '].max()
+        print(f"==>> wertmin: {wertmin}")
+        print(f"==>> wertmax: {wertmax}")
+        
+        wertnorm_liste = []
+        
+        for w_o in fd['STWE-Preis (Entwicklung) '].tolist():
+            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
+            wertnorm_liste.append(wert_norm)
+        
+        fd['STWE-Preis (Entwicklung) '] = wertnorm_liste
         
         # Baulandpreise
         wertmin, wertmax = fd['Baulandpreis (aktuell) '].min(), fd['Baulandpreis (aktuell) '].max()
@@ -266,47 +296,46 @@ if check_password():
         
         # Steuern DINKs
         
-        wertmin, wertmax = fd['Steuern_DINKs          '].min(), fd['Steuern_DINKs          '].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
+        #wertmin, wertmax = fd['Steuern_DINKs          '].min(), fd['Steuern_DINKs          '].max()
+        #print(f"==>> wertmin: {wertmin}")
+        #print(f"==>> wertmax: {wertmax}")
         
-        wertnorm_liste = []
+        #wertnorm_liste = []
         
-        for w_o in fd['Steuern_DINKs          '].tolist():
-            wert_norm = abs(1-(w_o-wertmin)/(wertmax-wertmin))
-            wertnorm_liste.append(wert_norm)
+        #for w_o in fd['Steuern_DINKs          '].tolist():
+            #wert_norm = abs(1-(w_o-wertmin)/(wertmax-wertmin))
+            #wertnorm_liste.append(wert_norm)
         
-        fd['Steuern_DINKs          '] = wertnorm_liste
+        #fd['Steuern_DINKs          '] = wertnorm_liste
         
         
         # Innenentwicklungspotenzial
         
-        wertmin, wertmax = fd['Innenentwicklungspotenzial'].min(), fd['Innenentwicklungspotenzial'].max()
+        wertmin, wertmax = fd['Innenentw.-potenzial   '].min(), fd['Innenentw.-potenzial   '].max()
         print(f"==>> wertmin: {wertmin}")
         print(f"==>> wertmax: {wertmax}")
         
         wertnorm_liste = []
         
-        for w_o in fd['Innenentwicklungspotenzial'].tolist():
+        for w_o in fd['Innenentw.-potenzial   '].tolist():
             wert_norm = (w_o-wertmin)/(wertmax)
             wertnorm_liste.append(wert_norm)
         
-        fd['Innenentwicklungspotenzial'] = wertnorm_liste
+        fd['Innenentw.-potenzial   '] = wertnorm_liste
         
         # Summe
         
-        kriterien = ['Wohnpreis (aktuell)    ',
-               'Wohnpreis (vgl. Region)', 'Wohnpreis (Entwicklung)',
+        kriterien = ['Wohnpreis (aktuell)    ', 'Wohnpreis (Entwicklung)', 'STWE-Preis (aktuell)   ',  'STWE-Preis (Entw.)     ',
                'Baulandpreis (aktuell) ', 'Baulandpreis (Entw.)   ',
                'Bevölkerung (Prognose) ', 'Alterung (Prognose)    ',
                'Beschäftigte (Prognose)', 'Erreichbarkeit ÖV      ',
                'Erreichbarkeit MIV     ',
-               'Innenentwicklungspotenzial', 'Steuern_DINKs          ']
+               'Innenentw.-potenzial   ']
         # Gewichte festlegen: das ist hier ist der Standard LM
         #g = [1.5, 1, 1.25, 1.5, 1, 1.25, 1, 1, 1.25, 1.25, 1, 1]
 
         
-        fd['Summe1'] = g_0*fd['Wohnpreis (aktuell)    ']+g_1*fd['Wohnpreis (vgl. Region)']+g_2*fd['Wohnpreis (Entwicklung)']+g_3*fd['Baulandpreis (aktuell) ']+g_4*fd['Baulandpreis (Entw.)   ']+g_5*fd['Bevölkerung (Prognose) ']+g_6*fd['Alterung (Prognose)    ']+g_7*fd['Beschäftigte (Prognose)']+g_8*fd['Erreichbarkeit ÖV      ']+g_9*fd['Erreichbarkeit MIV     ']+g_10*fd['Steuern_DINKs          ']+g_11*fd['Innenentwicklungspotenzial']
+        fd['Summe1'] = g_0*fd['Wohnpreis (aktuell)    ']+g_2*fd['Wohnpreis (Entwicklung)']+g_2b['STWE-Preis (aktuell)   ']+g_2c['STWE-Preis (Entw.)     ']+g_3*fd['Baulandpreis (aktuell) ']+g_4*fd['Baulandpreis (Entw.)   ']+g_5*fd['Bevölkerung (Prognose) ']+g_6*fd['Alterung (Prognose)    ']+g_7*fd['Beschäftigte (Prognose)']+g_8*fd['Erreichbarkeit ÖV      ']+g_9*fd['Erreichbarkeit MIV     ']+g_11*fd['Innenentw.-potenzial   ']
         # hier auf keinen Fall sortieren, weil sonst Dataframe ergänzgen falsch wird fd = fd.sort_values(by='Gemeinde', ascending=True)
         fd = fd.round(2)
         
@@ -330,7 +359,7 @@ if check_password():
         
         
         # Gemeinden georeferenzieren
-        gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open/main/Gemeinden2D.gpkg')
+        gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D.gpkg')
         
         
         
@@ -368,12 +397,12 @@ if check_password():
         storedf_geo['farbe'] = storedf_geo['farbe'].apply(lambda x: rgba_to_hex(x))
         
         
-        relcols = ['Wohnpreis (aktuell)    ',
-               'Wohnpreis (vgl. Region)', 'Wohnpreis (Entwicklung)',
+        relcols = ['Wohnpreis (aktuell)    ', 'Wohnpreis (Entwicklung)', 'STWE-Preis (aktuell)   ',  'STWE-Preis (Entw.)     ',
                'Baulandpreis (aktuell) ', 'Baulandpreis (Entw.)   ',
                'Bevölkerung (Prognose) ', 'Alterung (Prognose)    ',
                'Beschäftigte (Prognose)', 'Erreichbarkeit ÖV      ',
-               'Erreichbarkeit MIV     ','Steuern_DINKs          ', 'Innenentwicklungspotenzial']
+               'Erreichbarkeit MIV     ',
+               'Innenentw.-potenzial   ']
         
         for colname in relcols:
                norm = plt.Normalize(storedf_geo[colname].min(), storedf_geo[colname].max())
@@ -434,24 +463,26 @@ if check_password():
         storedf_geo = storedf_geo.round(2)
         df = storedf_geo.to_crs(epsg=4326)
 
-        # filter nun anwenden
+        # filter nun anwenden --> hier weiter machen nach dem Mittag
         
         #df = df[df['Wohnpreis (Miete, 70%-Q)']>=slider_miete1].reset_index(drop=True)
-        df = df[(df['Wohnpreis (Miete, 70%-Q)']>=slider_miete1[0])&(df['Wohnpreis (Miete, 70%-Q)']<=slider_miete1[1])].reset_index(drop=True)
+        df = df[(df['Mietpreis (70%-Q)']>=slider_miete1[0])&(df['Mietpreis (70%-Q)']<=slider_miete1[1])].reset_index(drop=True)
         #df = df[df['Wohnpreis Miete vgl. zu Region (70%-Q)']>=slider_miete2].reset_index(drop=True)
-        df = df[(df['Wohnpreis Miete vgl. zu Region (70%-Q)']>=slider_miete2[0])&(df['Wohnpreis Miete vgl. zu Region (70%-Q)']<=slider_miete2[1])].reset_index(drop=True)
+        #df = df[(df['Wohnpreis Miete vgl. zu Region (70%-Q)']>=slider_miete2[0])&(df['Wohnpreis Miete vgl. zu Region (70%-Q)']<=slider_miete2[1])].reset_index(drop=True)
         #df = df[df['Wohnpreis Entwicklung seit 2023 (70%-Q)']>=slider_miete3].reset_index(drop=True)
-        df = df[(df['Wohnpreis Entwicklung seit 2023 (70%-Q)']>=slider_miete3[0])&(df['Wohnpreis Entwicklung seit 2023 (70%-Q)']<=slider_miete3[1])].reset_index(drop=True)
+        df = df[(df['Mietpreis Entwicklung seit 2021 (70%-Q)']>=slider_miete3[0])&(df['Mietpreis Entwicklung seit 2021 (70%-Q)']<=slider_miete3[1])].reset_index(drop=True)
+        df = df[(df['STWE-Preis (70%-Q)']>=slider_stwe1[0])&(df['STWE-Preis (70%-Q)']<=slider_stwe1[1])].reset_index(drop=True)
+        df = df[(df['STWE-Preis Entwicklung seit 2021 (70%-Q)']>=slider_stwe2[0])&(df['STWE-Preis Entwicklung seit 2021 (70%-Q)']<=slider_stwe2[1])].reset_index(drop=True)
         #df = df[df['Baulandpreis aktuell (50%-Q)']<=slider_land1]
-        df = df[(df['Baulandpreis aktuell (50%-Q)']>=slider_land1[0])&(df['Baulandpreis aktuell (50%-Q)']<=slider_land1[1])].reset_index(drop=True)
+        df = df[(df['Baulandpreis aktuell (mittlere Lage)']>=slider_land1[0])&(df['Baulandpreis aktuell (mittlere Lage)']<=slider_land1[1])].reset_index(drop=True)
         #df = df[df['Baulandpreis Entwicklung seit 2020']<=slider_land2]
-        df = df[(df['Baulandpreis Entwicklung seit 2020']>=slider_land2[0])&(df['Baulandpreis Entwicklung seit 2020']<=slider_land2[1])].reset_index(drop=True)
-        df = df[(df['Bevölkerung Prognose bis 2055']>=slider_bev[0])&(df['Bevölkerung Prognose bis 2055']<=slider_bev[1])].reset_index(drop=True)
-        df = df[(df['Alterung Prognose bis 2045 (Anteil Ü50)']>=slider_alterung[0])&(df['Alterung Prognose bis 2045 (Anteil Ü50)']<=slider_alterung[1])].reset_index(drop=True)
-        df = df[(df['Beschäftigte Prognose bis 2050']>=slider_beschäftigte[0])&(df['Beschäftigte Prognose bis 2050']<=slider_beschäftigte[1])].reset_index(drop=True)
-        df = df[(df['Erreichbarkeit ÖV (50 Min.)']>=slider_err_öv[0])&(df['Erreichbarkeit ÖV (50 Min.)']<=slider_err_öv[1])].reset_index(drop=True)
-        df = df[(df['Erreichbarkeit MIV (50 Min.)']>=slider_err_miv[0])&(df['Erreichbarkeit MIV (50 Min.)']<=slider_err_miv[1])].reset_index(drop=True)
-        df = df[(df['Steuern DINKs (Avg. Einkommen)']>=slider_steuern[0])&(df['Steuern DINKs (Avg. Einkommen)']<=slider_steuern[1])].reset_index(drop=True)
+        df = df[(df['Baulandpreis Entwicklung seit 2020']>=slider_land2[0])&(df['Baulandpreis Entwicklung seit 2019']<=slider_land2[1])].reset_index(drop=True)
+        df = df[(df['Bevölkerung Prognose bis 2035']>=slider_bev[0])&(df['Bevölkerung Prognose bis 2035']<=slider_bev[1])].reset_index(drop=True)
+        df = df[(df['Alterung Prognose bis 2035 (Anteil Ü65)']>=slider_alterung[0])&(df['Alterung Prognose bis 2035 (Anteil Ü65)']<=slider_alterung[1])].reset_index(drop=True)
+        df = df[(df['Beschäftigte Prognose bis 2035']>=slider_beschäftigte[0])&(df['Beschäftigte Prognose bis 2035']<=slider_beschäftigte[1])].reset_index(drop=True)
+        df = df[(df['Erreichbarkeit ÖV (30 Min.)']>=slider_err_öv[0])&(df['Erreichbarkeit ÖV (30 Min.)']<=slider_err_öv[1])].reset_index(drop=True)
+        df = df[(df['Erreichbarkeit MIV (30 Min.)']>=slider_err_miv[0])&(df['Erreichbarkeit MIV (30 Min.)']<=slider_err_miv[1])].reset_index(drop=True)
+        #df = df[(df['Steuern DINKs (Avg. Einkommen)']>=slider_steuern[0])&(df['Steuern DINKs (Avg. Einkommen)']<=slider_steuern[1])].reset_index(drop=True)
         df = df[(df['Innenentwicklungspotenzial Sotomo/Urbanistica']>=slider_innen[0])&(df['Innenentwicklungspotenzial Sotomo/Urbanistica']<=slider_innen[1])].reset_index(drop=True)
         
     
@@ -474,19 +505,13 @@ if check_password():
         m = folium.Map(location=[firstobject.y, firstobject.x], zoom_start=10, tiles=satellite, zoom_control=False) # CartoDB dark_matter, positron, voyager
         
         
-        
-        hoverinfo = folium.GeoJsonTooltip(fields=['NAME','Wohnpreis (Miete, 70%-Q)', 'Baulandpreis aktuell (50%-Q)', 'Summe1'], aliases=['Gemeinde','Wohnpreis (Miete, 70%-Q)', 'Baulandpreis aktuell (50%-Q)', 'Rating'])
-        htmlpopup = folium.GeoJsonPopup(fields=['Gemeinde', 'Wohnpreis (aktuell)    ',
-         'Wohnpreis (vgl. Region)',
-         'Wohnpreis (Entwicklung)',
-         'Baulandpreis (aktuell) ',
-         'Baulandpreis (Entw.)   ',
-         'Bevölkerung (Prognose) ',
-         'Alterung (Prognose)    ',
-         'Beschäftigte (Prognose)',
-         'Erreichbarkeit ÖV      ',
-         'Erreichbarkeit MIV     ','Steuern_DINKs          ',
-         'Innenentwicklungspotenzial', 'Summe'], aliases=['Gemeinde', 'Wohnpreis', 'Wohnpreis (vgl. Region)','Wohnpreis (Entwicklung)', 'Baulandpreis', 'Baulandpreis (Entwicklung)', 'Bevölkerung (Prognose)','Alterung (Prognose)', 'Beschäftigung (Prognose)', 'Erreichbarkeit ÖV', 'Erreichbarkeit MIV','Steuern_DINKs', 'Innenentwicklung', 'Rating (Summe)'], labels=False, style="font-size:12px;", max_width=1200)
+        hoverinfo = folium.GeoJsonTooltip(fields=['NAME','Wohnpreis (aktuell)    ', 'Baulandpreis (aktuell) ', 'Summe1'], aliases=['Gemeinde','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Rating'])
+        htmlpopup = folium.GeoJsonPopup(fields=['Gemeinde','Wohnpreis (aktuell)    ', 'Wohnpreis (Entwicklung)', 'STWE-Preis (aktuell)   ',  'STWE-Preis (Entw.)     ',
+               'Baulandpreis (aktuell) ', 'Baulandpreis (Entw.)   ',
+               'Bevölkerung (Prognose) ', 'Alterung (Prognose)    ',
+               'Beschäftigte (Prognose)', 'Erreichbarkeit ÖV      ',
+               'Erreichbarkeit MIV     ',
+               'Innenentw.-potenzial   ', 'Summe'], aliases=['Gemeinde', 'Mietpreis (70%-Q)','Mietpreis (Entwicklung)', 'Baulandpreis aktuell (mittlere Lage)', 'Baulandpreis (Entwicklung)', 'Bevölkerung (Prognose)','Alterung (Prognose)', 'Beschäftigung (Prognose)', 'Erreichbarkeit ÖV', 'Erreichbarkeit MIV', 'Innenentwicklung', 'Rating (Summe)'], labels=False, style="font-size:12px;", max_width=1200)
         
         
         # alles zusammen plotten
@@ -610,17 +635,17 @@ if check_password():
             Je grösser der Wert, desto attraktiver die Gemeinde für einen Investor.<br><br>
             Gewichte:<br>
             {kriterien[0]}: {g_0}<br>
-            {kriterien[1]}: {g_1}<br>
-            {kriterien[2]}: {g_2}<br>
-            {kriterien[3]}: {g_3}<br>
-            {kriterien[4]}: {g_4}<br>
-            {kriterien[5]}: {g_5}<br>
-            {kriterien[6]}: {g_6}<br>
-            {kriterien[7]}: {g_7}<br>
-            {kriterien[8]}: {g_8}<br>
-            {kriterien[9]}: {g_9}<br>
-            {kriterien[10]}: {g_10}<br>
-            {kriterien[11]}: {g_11}<br>
+            {kriterien[1]}: {g_2}<br>
+            {kriterien[2]}: {g_2b}<br>
+            {kriterien[3]}: {g_2c}<br>
+            {kriterien[4]}: {g_3}<br>
+            {kriterien[5]}: {g_4}<br>
+            {kriterien[6]}: {g_5}<br>
+            {kriterien[7]}: {g_6}<br>
+            {kriterien[8]}: {g_7}<br>
+            {kriterien[9]}: {g_8}<br>
+            {kriterien[10]}: {g_9}<br>
+            {kriterien[11]}: {g_10}<br>
             <br><br>
             <button onclick="document.getElementById('sdfd').style.display='none'">Schliessen</button>
           </div>
