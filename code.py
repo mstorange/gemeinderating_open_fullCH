@@ -341,23 +341,6 @@ if check_password():
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         # Gemeinden georeferenzieren
         gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D.gpkg')
         
@@ -538,9 +521,10 @@ if check_password():
         # in der Karte direkt den Gemeindenamen und den Wert anzeigen
         fg_summe_marker = folium.FeatureGroup(name='Attraktivität Summe', show=True).add_to(m)
         for _, row in df.iterrows(): # _ is a convention to tell the user that we don't need this value and it's only there since iterrow requires such a value
+            name = row['Gemeindename']
+            print(name)
             centroid = row['geometry'].centroid
             value = row['Summe1']
-            name = row['Gemeindename']
             folium.Marker(
                 location=[centroid.y, centroid.x],
                 icon=folium.DivIcon(html=f'<div style="font-size: 9px; color: white;">{name}<br>{value}</div>')
