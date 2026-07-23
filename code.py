@@ -351,7 +351,7 @@ if check_password():
         # warum auch immer sind hier auch deutsche, italienische, etc. Polygone drin haha, diese nehmen wir raus, sie haben die BFS-NR 0
         gemeinden2d = gemeinden2d[gemeinden2d['bfs_nummer']!=0].reset_index(drop=True)
         gemeinden2d = gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
-        gemeinden2d = gemeinden2d.replace('Fétigny', 'Fétigny-Ménières')
+        gemeinden2d = gemeinden2d.replace('Fétigny-Ménières', 'Fétigny')
         ##st.write('Welche Spalten hat gemeinden2d?')
         #st.write(gemeinden2d.columns)
         #st.write('Welche Spalten hat fd?')
