@@ -343,20 +343,20 @@ if check_password():
         
         
         # Gemeinden georeferenzieren
-        gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D.gpkg')
+        gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.gpkg')
         
         
         
         
         # warum auch immer sind hier auch deutsche, italienische, etc. Polygone drin haha, diese nehmen wir raus, sie haben die BFS-NR 0
-        gemeinden2d = gemeinden2d[gemeinden2d['BFS_NUMMER']!=0].reset_index(drop=True)
+        gemeinden2d = gemeinden2d[gemeinden2d['bfs_nummer']!=0].reset_index(drop=True)
         ##st.write('Welche Spalten hat gemeinden2d?')
         #st.write(gemeinden2d.columns)
         #st.write('Welche Spalten hat fd?')
         #st.write(fd.columns)
         
         # Gemeindegeometrien dazufügen
-        storedf_geo = fd.merge(right=gemeinden2d, left_on='Gemeindename',right_on='NAME', how='left')
+        storedf_geo = fd.merge(right=gemeinden2d, left_on='Gemeindename',right_on='name', how='left')
         #st.write('Länge des merges:', len(storedf_geo))
         #st.write('Hier gemeinden2d.empty testen:', gemeinden2d.empty)
         storedf_geo = gpd.GeoDataFrame(storedf_geo, crs='EPSG:2056', geometry='geometry')
@@ -491,7 +491,7 @@ if check_password():
         m = folium.Map(location=[firstobject.y, firstobject.x], zoom_start=10, tiles=satellite, zoom_control=False) # CartoDB dark_matter, positron, voyager
         
         
-        hoverinfo = folium.GeoJsonTooltip(fields=['Gemeindename','Wohnpreis (aktuell)    ', 'Baulandpreis (aktuell) ', 'Summe1'], aliases=['Gemeinde','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Rating'])
+        hoverinfo = folium.GeoJsonTooltip(fields=['NAME','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Summe1'], aliases=['Gemeinde','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Rating'])
         htmlpopup = folium.GeoJsonPopup(fields=['Gemeindename','Wohnpreis (aktuell)    ', 'Wohnpreis (Entwicklung)', 'STWE-Preis (aktuell)   ',  'STWE-Preis (Entw.)     ',
                'Baulandpreis (aktuell) ', 'Baulandpreis (Entw.)   ',
                'Bevölkerung (Prognose) ', 'Alterung (Prognose)    ',
