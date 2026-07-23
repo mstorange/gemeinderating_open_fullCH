@@ -356,7 +356,7 @@ if check_password():
         fd = fd.round(2)
         
         
-        gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open/main/Gemeinden2D_2026.gpkg')
+        gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.gpkg')
         
         # warum auch immer sind hier auch deutsche, italienische, etc. Polygone drin haha, diese nehmen wir raus, sie haben die BFS-NR 0
         gemeinden2d = gemeinden2d[gemeinden2d['bfs_nummer']!=0].reset_index(drop=True)
