@@ -78,13 +78,13 @@ if check_password():
     #for file in allurls:
         #df = pd.read_csv(file)
         #data = pd.concat([data, df], ignore_index=True)
-    
+
     # nur jene Kantone, wovon mehrere Gemeinden vorkommen
+
+    data = load_initial_data()  # Lädt gecacht!
     allekantone = data['Kanton'].value_counts()
     valid_kantone = allekantone[allekantone > 10].index.tolist()
     valid_kantone = [i for i in valid_kantone if i not in ['GR', 'TI']]
-
-    data = load_initial_data()  # Lädt gecacht!
     
     print('Anzahl valide Gemeinden mit Geometrien: ', len(data))
         #st.write('Länge des merges:', len(storedf_geo))
