@@ -10,12 +10,12 @@ import matplotlib.pyplot as plt
 from streamlit_folium import st_folium
 
 @st.cache_data
-def load_initial_data():
+def load_initial_data(selectedcantons):
     """Lädt Basis-Daten (wird nur einmal geladen!)"""
     data_toml = json.loads(st.secrets["my_data"]["data"])
     data = pd.DataFrame(data_toml)
     invalid_gemeinden = [2016, 2520, 700, 2027, 2529, 2278, 4122]
-    data = data[~data['BFS Gde-nummer'].isin(invalid_gemeinden)].reset_index(drop=True)
+    data = data[(data['Kanton'].isin[selectedcantons])&(~data['BFS Gde-nummer'].isin(invalid_gemeinden))].reset_index(drop=True)
     return data
 
 @st.cache_data
@@ -81,10 +81,10 @@ if check_password():
 
     # nur jene Kantone, wovon mehrere Gemeinden vorkommen
 
-    data = load_initial_data()  # Lädt gecacht!
-    allekantone = data['Kanton'].value_counts()
-    valid_kantone = allekantone[allekantone > 10].index.tolist()
-    valid_kantone = [i for i in valid_kantone if i not in ['GR', 'TI']]
+    
+    valid_kantone = ["AG", "AI", "AR", "BE", "BL", "BS", "FR", "GE", "GL", "JU", 
+    "LU", "NE", "NW", "OW", "SG", "SH", "SO", "SZ", "TG", "UR", 
+    "VD", "VS", "ZG", "ZH"]
     
     print('Anzahl valide Gemeinden mit Geometrien: ', len(data))
         #st.write('Länge des merges:', len(storedf_geo))
@@ -141,7 +141,8 @@ if check_password():
     
         st.write("Folgende Kantone werden analysiert:", ', '.join(selected_cantons))
         #st.write("Typ der selected_cantons variable:", type(selected_cantons))
-        fd = data[data["Kanton"].isin(st.session_state.selected_cantons)].reset_index(drop=True)
+        fd = load_initial_data(selectedcantons = st.session_state.selected_cantons)  # Lädt gecacht!
+        #fd = data[data["Kanton"].isin(st.session_state.selected_cantons)].reset_index(drop=True)
 
         # für die Slider: absolute Werte ergänzen
         fd['Mietpreis (70%-Q)'] = fd['Wohnpreis (aktuell)    ']*1
