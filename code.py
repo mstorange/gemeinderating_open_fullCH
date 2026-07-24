@@ -86,7 +86,7 @@ if check_password():
     "LU", "NE", "NW", "OW", "SG", "SH", "SO", "SZ", "TG", "UR", 
     "VD", "VS", "ZG", "ZH"]
     
-    print('Anzahl valide Gemeinden mit Geometrien: ', len(data))
+    #print('Anzahl valide Gemeinden mit Geometrien: ', len(data))
         #st.write('Länge des merges:', len(storedf_geo))
         #st.write('Hier gemeinden2d.empty testen:', gemeinden2d.empty)
     #storedf_geo = gpd.GeoDataFrame(storedf_geo, crs='EPSG:2056', geometry='geometry')
