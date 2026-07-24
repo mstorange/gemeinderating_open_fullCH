@@ -15,7 +15,7 @@ def load_initial_data(selectedcantons):
     data_toml = json.loads(st.secrets["my_data"]["data"])
     data = pd.DataFrame(data_toml)
     invalid_gemeinden = [2016, 2520, 700, 2027, 2529, 2278, 4122]
-    data = data[(data['Kanton'].isin[selectedcantons])&(~data['BFS Gde-nummer'].isin(invalid_gemeinden))].reset_index(drop=True)
+    data = data[(data['Kanton'].isin(selectedcantons))&(~data['BFS Gde-nummer'].isin(invalid_gemeinden))].reset_index(drop=True)
     return data
 
 @st.cache_data
