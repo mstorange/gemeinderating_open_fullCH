@@ -118,20 +118,20 @@ if check_password():
 
         with st.expander("Filter setzen (bspw. nur alle Gemeinden mit Mietpreisen > 250 CHF/m2 einblenden)", expanded=False):
             # Werte aus WP-Berichte_App.ipynb vom concat der Kantone SG, TG, LU, ZG, AG
-            slider_miete1 = st.slider(label="Mietzins (70%-Q.)", min_value=data['Wohnpreis (aktuell)    '].min()-1, max_value=data['Wohnpreis (aktuell)    '].max()+1, step=10, value=(data['Wohnpreis (aktuell)    '].min()-1, data['Wohnpreis (aktuell)    '].max()+1))
+            slider_miete1 = st.slider(label="Mietzins (70%-Q.)", min_value=135, max_value=562, step=10, value=(135, 562))
             #slider_miete2 = st.slider(label="Mietzins-Verhältnis vgl. zu Region min (70%-Q.)", min_value=data['Wohnpreis (vgl. Region)'].min()-0.1, max_value=data['Wohnpreis (vgl. Region)'].max()+0.1, step=0.1, value=(data['Wohnpreis (vgl. Region)'].min()-0.1, data['Wohnpreis (vgl. Region)'].max()+0.1))
-            slider_miete3 = st.slider(label="Mietzins-Entwicklung seit 2021 (70%-Q.)", min_value=data['Wohnpreis (Entwicklung)'].min()-0.1, max_value=data['Wohnpreis (Entwicklung)'].max()+0.1, step=0.1, value=(data['Wohnpreis (Entwicklung)'].min()-0.1, data['Wohnpreis (Entwicklung)'].max()+0.1))
-            slider_stwe1= st.slider(label="STWE-Preis (70%-Q.)", min_value=data['STWE-Preis (aktuell)   '].min()-1, max_value=data['STWE-Preis (aktuell)   '].max()+1, step=10, value=(data['STWE-Preis (aktuell)   '].min()-1, data['STWE-Preis (aktuell)   '].max()+1))
-            slider_stwe2 = st.slider(label="STWE-Entwicklung seit 2021 (70%-Q.)", min_value=data['STWE-Preis (Entw.)     '].min()-0.1, max_value=data['STWE-Preis (Entw.)     '].max()+0.1, step=0.1, value=(data['STWE-Preis (Entw.)     '].min()-0.1, data['STWE-Preis (Entw.)     '].max()+0.1))
-            slider_land1 = st.slider(label="Baulandpreis (mittlere Lage)", min_value=data['Baulandpreis (aktuell) '].min()-50.0, max_value=data['Baulandpreis (aktuell) '].max()+50.0, step=50.0, value=(data['Baulandpreis (aktuell) '].min()-50.0, data['Baulandpreis (aktuell) '].max()+50.0))
-            slider_land2 = st.slider(label="Baulandpreis-Entwicklung (Verhältnis zu 2019, mittlere Lage)", min_value=data['Baulandpreis (Entw.)   '].min()-0.1, max_value=data['Baulandpreis (Entw.)   '].max()+0.1, step=0.1, value=(data['Baulandpreis (Entw.)   '].min()-0.1, data['Baulandpreis (Entw.)   '].max()+0.1))
-            slider_bev = st.slider(label="Bevölkerung Prognose (Verhältnis 2024 zu 2035)", min_value=data['Bevölkerung (Prognose) '].min()-10.0, max_value=data['Bevölkerung (Prognose) '].max()+10.0, step=10.0, value=(data['Bevölkerung (Prognose) '].min()-10, data['Bevölkerung (Prognose) '].max()+10))
-            slider_alterung = st.slider(label="Alterung Prognose (Anteil Ü65, Verhältnis 2024 zu 2035)", min_value=data['Alterung (Prognose)    '].min()-0.1, max_value=data['Alterung (Prognose)    '].max()+0.1, step=0.1, value=(data['Alterung (Prognose)    '].min()-0.1, data['Alterung (Prognose)    '].max()+0.1))
-            slider_beschäftigte = st.slider(label="Beschäftigte Prognose (Verhältnis 2024 zu 2035)", min_value=data['Beschäftigte (Prognose)'].min()-0.1, max_value=data['Beschäftigte (Prognose)'].max()+0.1, step=0.1, value=(data['Beschäftigte (Prognose)'].min()-0.1, data['Beschäftigte (Prognose)'].max()+0.1))
-            slider_err_öv = st.slider(label="Erreichbarkeit Personen & Beschäftigte ÖV (30 Min.-Umkreis)", min_value=data['Erreichbarkeit ÖV      '].min()-10000.0, max_value=data['Erreichbarkeit ÖV      '].max()+10000.0, step=10000.0, value=(data['Erreichbarkeit ÖV      '].min()-10000.0, data['Erreichbarkeit ÖV      '].max()+10000.0))
-            slider_err_miv = st.slider(label="Erreichbarkeit Pesonen & Beschäftigte MIV (30 Min.-Umkreis)", min_value=data['Erreichbarkeit MIV     '].min()-100000.0, max_value=data['Erreichbarkeit MIV     '].max()+100000.0, step=100000.0, value=(data['Erreichbarkeit MIV     '].min()-100000.0, data['Erreichbarkeit MIV     '].max()+100000.0))
+            slider_miete3 = st.slider(label="Mietzins-Entwicklung seit 2021 (70%-Q.)", min_value=-13.3, max_value=107.9, step=0.1, value=(-13.3, 107.9))
+            slider_stwe1= st.slider(label="STWE-Preis (70%-Q.)", min_value=3052, max_value=25260, step=10, value=(3052, 25260))
+            slider_stwe2 = st.slider(label="STWE-Entwicklung seit 2021 (70%-Q.)", min_value=-21.7, max_value=158.3, step=0.1, value=(-21.7, 158.3))
+            slider_land1 = st.slider(label="Baulandpreis (mittlere Lage)", min_value=50, max_value=9650, step=50.0, value=(50, 9650))
+            slider_land2 = st.slider(label="Baulandpreis-Entwicklung (Verhältnis zu 2019, mittlere Lage)", min_value=-60.9, max_value=138.3, step=0.1, value=(-60.9, 138.3))
+            slider_bev = st.slider(label="Bevölkerung Prognose (Verhältnis 2024 zu 2035)", min_value=-0.2, max_value=0.7, step=10.0, value=(-0.2, 0.7))
+            slider_alterung = st.slider(label="Alterung Prognose (Anteil Ü65, Verhältnis 2024 zu 2035)", min_value=-0.3, max_value=2.0, step=0.1, value=(-0.3, 2.0))
+            slider_beschäftigte = st.slider(label="Beschäftigte Prognose (Verhältnis 2024 zu 2035)", min_value=-0.38, max_value=0.97, step=0.1, value=(-0.38, 0.97))
+            slider_err_öv = st.slider(label="Erreichbarkeit Personen & Beschäftigte ÖV (30 Min.-Umkreis)", min_value=50, max_value=2050000, step=10000, value=(50, 2050000))
+            slider_err_miv = st.slider(label="Erreichbarkeit Pesonen & Beschäftigte MIV (30 Min.-Umkreis)", min_value=4600, max_value=3850000, step=100000, value=(4600, 3850000))
             #slider_steuern = st.slider(label="Steuern DINKs (Mittelwert über alle Einkommensklassen)", min_value=data['Steuern_DINKs          '].min()-0.05, max_value=data['Steuern_DINKs          '].max()+0.05, step=0.05, value=(data['Steuern_DINKs          '].min()-0.05, data['Steuern_DINKs          '].max()+0.05))
-            slider_innen = st.slider(label="Innenentwicklungspotenzial (Sotomo/Urbanistica)", min_value=data['Innenentw.-potenzial   '].min()-0.1, max_value=data['Innenentw.-potenzial   '].max()+0.1, step=0.1, value=(data['Innenentw.-potenzial   '].min()-0.1, data['Innenentw.-potenzial   '].max()+0.1))
+            slider_innen = st.slider(label="Innenentwicklungspotenzial (Sotomo/Urbanistica)", min_value=0.0, max_value=4.1, step=0.1, value=(0.0, 4.1))
     
         submitted = st.form_submit_button("Anwenden")
     
