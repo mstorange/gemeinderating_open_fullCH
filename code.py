@@ -123,7 +123,7 @@ if check_password():
             slider_miete3 = st.slider(label="Mietzins-Entwicklung seit 2021 (70%-Q.)", min_value=-13.3, max_value=107.9, step=0.1, value=(-13.3, 107.9))
             slider_stwe1= st.slider(label="STWE-Preis (70%-Q.)", min_value=3052, max_value=25260, step=10, value=(3052, 25260))
             slider_stwe2 = st.slider(label="STWE-Entwicklung seit 2021 (70%-Q.)", min_value=-21.7, max_value=158.3, step=0.1, value=(-21.7, 158.3))
-            slider_land1 = st.slider(label="Baulandpreis (mittlere Lage)", min_value=50, max_value=9650, step=50.0, value=(50, 9650))
+            slider_land1 = st.slider(label="Baulandpreis (mittlere Lage)", min_value=50, max_value=9650, step=50, value=(50, 9650))
             slider_land2 = st.slider(label="Baulandpreis-Entwicklung (Verhältnis zu 2019, mittlere Lage)", min_value=-60.9, max_value=138.3, step=0.1, value=(-60.9, 138.3))
             slider_bev = st.slider(label="Bevölkerung Prognose (Verhältnis 2024 zu 2035)", min_value=-0.2, max_value=0.7, step=10.0, value=(-0.2, 0.7))
             slider_alterung = st.slider(label="Alterung Prognose (Anteil Ü65, Verhältnis 2024 zu 2035)", min_value=-0.3, max_value=2.0, step=0.1, value=(-0.3, 2.0))
