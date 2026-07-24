@@ -19,10 +19,10 @@ def load_initial_data(selectedcantons):
     return data
 
 @st.cache_data
-def load_gemeinden2d():
+def load_gemeinden2d(selectedcantons):
     """Lädt GeoDataFrame (wird nur einmal heruntergeladen!)"""
     gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.gpkg')
-    gemeinden2d = gemeinden2d[gemeinden2d['bfs_nummer']!=0].reset_index(drop=True)
+    gemeinden2d = gemeinden2d[(gemeinden2d['kanton'].isin(selectedcantons))&(gemeinden2d['bfs_nummer']!=0)].reset_index(drop=True)
     return gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
 
 @st.cache_data
@@ -195,7 +195,7 @@ if check_password():
         fd = fd.round(2)
         
         
-        gemeinden2d = load_gemeinden2d()  # Lädt gecacht!
+        gemeinden2d = load_gemeinden2d(selectedcantons = st.session_state.selected_cantons)  # Lädt gecacht!
 
         ##st.write('Welche Spalten hat gemeinden2d?')
         #st.write(gemeinden2d.columns)
