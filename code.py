@@ -47,7 +47,7 @@ def load_gemeinden2d(selectedcantons):
     'NE': 24.0,
     'GE': 25.0,
     'JU': 26.0}
-    gemeinden2d['kanton'] = gemeinden['kantonsnummer'].map(ctdict)
+    gemeinden2d['kanton'] = gemeinden2d['kantonsnummer'].map(ctdict)
     gemeinden2d = gemeinden2d[(gemeinden2d['kanton'].isin(selectedcantons))&(gemeinden2d['bfs_nummer']!=0)].reset_index(drop=True)
     return gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
 
