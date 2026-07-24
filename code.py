@@ -21,9 +21,9 @@ def load_initial_data(selectedcantons):
 @st.cache_data
 def load_gemeinden2d(selectedcantons):
     """Lädt GeoDataFrame (wird nur einmal heruntergeladen!)"""
-    gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.gpkg')
-    ctdict = {1.0: 'ZH', 2.0: 'BE', 3.0: 'LU', 4.0: 'UR', 5.0: 'SZ', 6.0: 'OW', 7.0: 'NW', 8.0: 'GL', 9.0: 'ZG', 10.0: 'FR', 11.0: 'SO', 12.0: 'BS', 13.0: 'BL', 14.0: 'SH', 15.0: 'AR', 16.0: 'AI', 17.0: 'SG', 18.0: 'GR', 19.0: 'AG', 20.0: 'TG', 21.0: 'TI', 22.0: 'VD', 23.0: 'VS', 24.0: 'NE', 25.0: 'GE', 26.0: 'JU'}
-    gemeinden2d['kanton'] = gemeinden2d['kantonsnummer'].apply(lambda x: ctdict[x])
+    gemeinden2d = gpd.read_parquet('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.parquet')
+    #ctdict = {1.0: 'ZH', 2.0: 'BE', 3.0: 'LU', 4.0: 'UR', 5.0: 'SZ', 6.0: 'OW', 7.0: 'NW', 8.0: 'GL', 9.0: 'ZG', 10.0: 'FR', 11.0: 'SO', 12.0: 'BS', 13.0: 'BL', 14.0: 'SH', 15.0: 'AR', 16.0: 'AI', 17.0: 'SG', 18.0: 'GR', 19.0: 'AG', 20.0: 'TG', 21.0: 'TI', 22.0: 'VD', 23.0: 'VS', 24.0: 'NE', 25.0: 'GE', 26.0: 'JU'}
+    #gemeinden2d['kanton'] = gemeinden2d['kantonsnummer'].apply(lambda x: ctdict[x])
     gemeinden2d = gemeinden2d[(gemeinden2d['kanton'].isin(selectedcantons))&(gemeinden2d['bfs_nummer']!=0)].reset_index(drop=True)
     return gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
 
