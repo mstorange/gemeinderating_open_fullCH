@@ -222,6 +222,7 @@ if check_password():
         
         
         gemeinden2d = load_gemeinden2d(selectedcantons = st.session_state.selected_cantons)  # Lädt gecacht!
+        print(gemeinden2d.head())
 
         ##st.write('Welche Spalten hat gemeinden2d?')
         #st.write(gemeinden2d.columns)
