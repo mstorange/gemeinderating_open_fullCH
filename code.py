@@ -9,6 +9,37 @@ from numpy import float64
 import matplotlib.pyplot as plt
 from streamlit_folium import st_folium
 
+@st.cache_data
+def load_initial_data():
+    """Lädt Basis-Daten (wird nur einmal geladen!)"""
+    data_toml = json.loads(st.secrets["my_data"]["data"])
+    data = pd.DataFrame(data_toml)
+    invalid_gemeinden = [2016, 2520, 700, 2027, 2529, 2278, 4122]
+    data = data[~data['BFS Gde-nummer'].isin(invalid_gemeinden)].reset_index(drop=True)
+    return data
+
+@st.cache_data
+def load_gemeinden2d():
+    """Lädt GeoDataFrame (wird nur einmal heruntergeladen!)"""
+    gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.gpkg')
+    gemeinden2d = gemeinden2d[gemeinden2d['bfs_nummer']!=0].reset_index(drop=True)
+    return gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
+
+@st.cache_data
+def normalize_column_vectorized(series, invert=False):
+    """Schnelle vektorisierte Normalisierung (NICHT in Loops!)"""
+    vmin = series.min()
+    vmax = series.max()
+    if vmax == vmin:
+        return pd.Series([0.5] * len(series), index=series.index)
+    normalized = (series - vmin) / (vmax - vmin)
+    return 1 - normalized if invert else normalized
+
+# ⭐ HILFSFUNKTION für Hex-Farbe
+def rgba_to_hex(rgba):
+    """Konvertiert RGBA zu Hex"""
+    return '#{:02x}{:02x}{:02x}'.format(int(rgba[0]*255), int(rgba[1]*255), int(rgba[2]*255))
+
 def wide_space_default():
     st.set_page_config(layout='wide')
 wide_space_default()
@@ -41,8 +72,6 @@ if check_password():
         st.session_state.applied = False
     
     
-    data_toml = json.loads(st.secrets["my_data"]["data"])
-    data = pd.DataFrame(data_toml)
     
     #allurls = ["https://raw.githubusercontent.com/mstorange/gemeinderating/main/AG.csv", "https://raw.githubusercontent.com/mstorange/gemeinderating/main/TG_SG.csv", "https://raw.githubusercontent.com/mstorange/gemeinderating/main/ZG_LU.csv"]
     
@@ -55,20 +84,8 @@ if check_password():
     valid_kantone = allekantone[allekantone > 10].index.tolist()
     valid_kantone = [i for i in valid_kantone if i not in ['GR', 'TI']]
 
-    # wir wollen die Filtergrenzwerte nun basierend auf allen möglichen Kantonen, von denen wir schon Daten haben, bestimmen, damit es keine Löcher gibt, weil gewisse Gemeinden ausserhalb der Fitlerrange min und max liegen
-    # machen wir unten direkt
-
-    # Gemeinden georeferenzieren --> es sollen nur jene Gemeinden in data bleiben, die auch georeferenziert werden können (7 Gemeinden können nicht, weil sie nicht mehr eigenständig sind --> diese rausnehmen aus den WP-Daten: Fétigny, Halten, Moutier, Ménières, Oekingen, Ulmiz, Villnachern
-    #gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.gpkg')
-        
-    # warum auch immer sind hier auch deutsche, italienische, etc. Polygone drin haha, diese nehmen wir raus, sie haben die BFS-NR 0
-    #gemeinden2d = gemeinden2d[gemeinden2d['bfs_nummer']!=0].reset_index(drop=True)
-    #gemeinden2d = gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
-
-        # Gemeindegeometrien dazufügen
-    #storedf_geo = data.merge(right=gemeinden2d, left_on='BFS Gde-nummer',right_on='bfs_nummer', how='inner') # damit fliegen eheamlige Gemeinden raus
-    invalid_gemeinden = [2016, 2520, 700, 2027, 2529, 2278, 4122] #storedf_geo['bfs_nummer'].tolist()
-    data = data[~data['BFS Gde-nummer'].isin(invalid_gemeinden)].reset_index(drop=True)
+    data = load_initial_data()  # Lädt gecacht!
+    
     print('Anzahl valide Gemeinden mit Geometrien: ', len(data))
         #st.write('Länge des merges:', len(storedf_geo))
         #st.write('Hier gemeinden2d.empty testen:', gemeinden2d.empty)
@@ -146,199 +163,19 @@ if check_password():
         # wenn wir die slider hier anwenden, dann werden zuerst die Dinge rausgeworfen und dann die verbleibenden miteinander verglichen -> wollen wir nicht
         # fd = fd[fd['Wohnpreis (Miete, 70%-Q)']>=slider_miete1].reset_index(drop=True)
 
-        # Wohnpreise
-        wertmin, wertmax = fd['Wohnpreis (aktuell)    '].min(), fd['Wohnpreis (aktuell)    '].max()
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Wohnpreis (aktuell)    '].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Wohnpreis (aktuell)    '] = wertnorm_liste
-        
-        # Wohnpreise Region
-        #wertmin, wertmax = fd['Wohnpreis (vgl. Region)'].min(), fd['Wohnpreis (vgl. Region)'].max()
-        #print(f"==>> wertmin: {wertmin}")
-        #print(f"==>> wertmax: {wertmax}")
-        
-        #wertnorm_liste = []
-        
-        #for w_o in fd['Wohnpreis (vgl. Region)'].tolist():
-            #wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            #wertnorm_liste.append(wert_norm)
-        
-        #fd['Wohnpreis (vgl. Region)'] = wertnorm_liste
-        
-        # Wohnpreise Entwicklung
-        wertmin, wertmax = fd['Wohnpreis (Entwicklung)'].min(), fd['Wohnpreis (Entwicklung)'].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Wohnpreis (Entwicklung)'].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Wohnpreis (Entwicklung)'] = wertnorm_liste
-
-        # STWE-Preise
-        wertmin, wertmax = fd['STWE-Preis (aktuell)   '].min(), fd['STWE-Preis (aktuell)   '].max()
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['STWE-Preis (aktuell)   '].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            wertnorm_liste.append(wert_norm)
-        
-        fd['STWE-Preis (aktuell)   '] = wertnorm_liste
-
-        # STWE-Preise Entwicklung
-        wertmin, wertmax = fd['STWE-Preis (Entw.)     '].min(), fd['STWE-Preis (Entw.)     '].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['STWE-Preis (Entw.)     '].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            wertnorm_liste.append(wert_norm)
-        
-        fd['STWE-Preis (Entw.)     '] = wertnorm_liste
-        
-        # Baulandpreise
-        wertmin, wertmax = fd['Baulandpreis (aktuell) '].min(), fd['Baulandpreis (aktuell) '].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Baulandpreis (aktuell) '].tolist():
-            wert_norm = abs(1-(w_o-wertmin)/(wertmax-wertmin))
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Baulandpreis (aktuell) '] = wertnorm_liste
-        
-        
-        # Baulandpreise Entwicklung
-        
-        wertmin, wertmax = fd['Baulandpreis (Entw.)   '].min(), fd['Baulandpreis (Entw.)   '].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Baulandpreis (Entw.)   '].tolist():
-            wert_norm = abs(1-(w_o-wertmin)/(wertmax-wertmin))
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Baulandpreis (Entw.)   '] = wertnorm_liste
-        
-        
-        # Bevölkerung Prognose
-        
-        wertmin, wertmax = fd['Bevölkerung (Prognose) '].min(), fd['Bevölkerung (Prognose) '].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Bevölkerung (Prognose) '].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Bevölkerung (Prognose) '] = wertnorm_liste
-        
-        
-        # Bevölkerung Alterung
-        
-        wertmin, wertmax = fd['Alterung (Prognose)    '].min(), fd['Alterung (Prognose)    '].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Alterung (Prognose)    '].tolist():
-            wert_norm = abs(1-(w_o-wertmin)/(wertmax-wertmin))
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Alterung (Prognose)    '] = wertnorm_liste
-        
-        
-        # Beschäftigungsprognose
-        
-        wertmin, wertmax = fd['Beschäftigte (Prognose)'].min(), fd['Beschäftigte (Prognose)'].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Beschäftigte (Prognose)'].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Beschäftigte (Prognose)'] = wertnorm_liste
-        
-        
-        # Erreichbarkeit ÖV
-        
-        wertmin, wertmax = fd['Erreichbarkeit ÖV      '].min(), fd['Erreichbarkeit ÖV      '].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Erreichbarkeit ÖV      '].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Erreichbarkeit ÖV      '] = wertnorm_liste
-        
-        
-        # Erreichbarkeit MIV
-        
-        wertmin, wertmax = fd['Erreichbarkeit MIV     '].min(), fd['Erreichbarkeit MIV     '].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Erreichbarkeit MIV     '].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax-wertmin)
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Erreichbarkeit MIV     '] = wertnorm_liste
-        
-        
-        # Steuern DINKs
-        
-        #wertmin, wertmax = fd['Steuern_DINKs          '].min(), fd['Steuern_DINKs          '].max()
-        #print(f"==>> wertmin: {wertmin}")
-        #print(f"==>> wertmax: {wertmax}")
-        
-        #wertnorm_liste = []
-        
-        #for w_o in fd['Steuern_DINKs          '].tolist():
-            #wert_norm = abs(1-(w_o-wertmin)/(wertmax-wertmin))
-            #wertnorm_liste.append(wert_norm)
-        
-        #fd['Steuern_DINKs          '] = wertnorm_liste
-        
-        
-        # Innenentwicklungspotenzial
-        
-        wertmin, wertmax = fd['Innenentw.-potenzial   '].min(), fd['Innenentw.-potenzial   '].max()
-        print(f"==>> wertmin: {wertmin}")
-        print(f"==>> wertmax: {wertmax}")
-        
-        wertnorm_liste = []
-        
-        for w_o in fd['Innenentw.-potenzial   '].tolist():
-            wert_norm = (w_o-wertmin)/(wertmax)
-            wertnorm_liste.append(wert_norm)
-        
-        fd['Innenentw.-potenzial   '] = wertnorm_liste
+        # ⭐ ERSETZE ALLES DURCH:
+        fd['Wohnpreis (aktuell)    '] = normalize_column_vectorized(fd['Wohnpreis (aktuell)    '], invert=False)
+        fd['Wohnpreis (Entwicklung)'] = normalize_column_vectorized(fd['Wohnpreis (Entwicklung)'], invert=False)
+        fd['STWE-Preis (aktuell)   '] = normalize_column_vectorized(fd['STWE-Preis (aktuell)   '], invert=False)
+        fd['STWE-Preis (Entw.)     '] = normalize_column_vectorized(fd['STWE-Preis (Entw.)     '], invert=False)
+        fd['Baulandpreis (aktuell) '] = normalize_column_vectorized(fd['Baulandpreis (aktuell) '], invert=True)  # invert=True!
+        fd['Baulandpreis (Entw.)   '] = normalize_column_vectorized(fd['Baulandpreis (Entw.)   '], invert=True)
+        fd['Bevölkerung (Prognose) '] = normalize_column_vectorized(fd['Bevölkerung (Prognose) '], invert=False)
+        fd['Alterung (Prognose)    '] = normalize_column_vectorized(fd['Alterung (Prognose)    '], invert=True)
+        fd['Beschäftigte (Prognose)'] = normalize_column_vectorized(fd['Beschäftigte (Prognose)'], invert=False)
+        fd['Erreichbarkeit ÖV      '] = normalize_column_vectorized(fd['Erreichbarkeit ÖV      '], invert=False)
+        fd['Erreichbarkeit MIV     '] = normalize_column_vectorized(fd['Erreichbarkeit MIV     '], invert=False)
+        fd['Innenentw.-potenzial   '] = normalize_column_vectorized(fd['Innenentw.-potenzial   '], invert=False)
         
         # Summe
         
@@ -357,11 +194,8 @@ if check_password():
         fd = fd.round(2)
         
         
-        gemeinden2d = gpd.read_file('https://raw.githubusercontent.com/mstorange/gemeinderating_open_fullCH/main/Gemeinden2D_2026.gpkg')
-        
-        # warum auch immer sind hier auch deutsche, italienische, etc. Polygone drin haha, diese nehmen wir raus, sie haben die BFS-NR 0
-        gemeinden2d = gemeinden2d[gemeinden2d['bfs_nummer']!=0].reset_index(drop=True)
-        gemeinden2d = gemeinden2d[['bfs_nummer', 'name','einwohnerzahl', 'geometry']]
+        gemeinden2d = load_gemeinden2d()  # Lädt gecacht!
+
         ##st.write('Welche Spalten hat gemeinden2d?')
         #st.write(gemeinden2d.columns)
         #st.write('Welche Spalten hat fd?')
