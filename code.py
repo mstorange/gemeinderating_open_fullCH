@@ -332,14 +332,14 @@ if check_password():
         
         #st.write('Hier unmittelbar vor folium.Map')
         
-        satellite = folium.TileLayer(
-                tiles = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                attr = 'Esri',
-                name = 'Esri Satellite',
-                overlay = False,
-                control = True)
+        carto = folium.TileLayer(
+            tiles = 'https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png?key=cb1_2u3w_1_cc90697fd6604688698fa3c7',
+            attr = 'CartoDB',
+            name = 'Karte hell',
+            overlay = False,
+            control = True)
         
-        m = folium.Map(location=[firstobject.y, firstobject.x], zoom_start=10, tiles=satellite, zoom_control=False, prefer_canvas = True) # CartoDB dark_matter, positron, voyager
+        m = folium.Map(location=[firstobject.y, firstobject.x], zoom_start=10, tiles=carto, zoom_control=False, prefer_canvas = True) # CartoDB dark_matter, positron, voyager
         
         
         hoverinfo = folium.GeoJsonTooltip(fields=['name','einwohnerzahl','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Summe1'], aliases=['Gemeinde','Einwohner 2025','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Rating'])
@@ -446,8 +446,7 @@ if check_password():
         m.get_root().html.add_child(Element(title_html))
         # m.get_root().html.add_child(Element(text_box_html))
         
-        
-        folium.TileLayer('CartoDB voyager', name= 'Karte hell').add_to(m)
+    
         folium.TileLayer('CartoDB dark_matter', name = 'Karte dunkel').add_to(m)
         
         
@@ -506,11 +505,6 @@ if check_password():
         # '''
         # m.get_root().html.add_child(Element(sidepanel_html))
         
-        lmlogo = '''
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Logo_Losinger_Marazzi.png/640px-Logo_Losinger_Marazzi.png" 
-         style="position:fixed; bottom:10px; right:10px; z-index:9999; width:80px; border-radius:10px;">
-        '''
-        m.get_root().html.add_child(Element(lmlogo))
         
         m.add_child(folium.map.LayerControl())
         #folium.LayerControl(collapsed=False).add_to(m)
