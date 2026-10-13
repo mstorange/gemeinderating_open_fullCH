@@ -446,8 +446,6 @@ if check_password():
         m.get_root().html.add_child(Element(title_html))
         # m.get_root().html.add_child(Element(text_box_html))
         
-    
-        folium.TileLayer('CartoDB dark_matter', name = 'Karte dunkel').add_to(m)
         
         
         info_button_html = """
