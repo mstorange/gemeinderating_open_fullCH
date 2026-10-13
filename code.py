@@ -339,7 +339,7 @@ if check_password():
                 overlay = False,
                 control = True)
         
-        m = folium.Map(location=[firstobject.y, firstobject.x], zoom_start=10, tiles=satellite, zoom_control=False) # CartoDB dark_matter, positron, voyager
+        m = folium.Map(location=[firstobject.y, firstobject.x], zoom_start=10, tiles=satellite, zoom_control=False, prefer_canvas = True) # CartoDB dark_matter, positron, voyager
         
         
         hoverinfo = folium.GeoJsonTooltip(fields=['name','einwohnerzahl','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Summe1'], aliases=['Gemeinde','Einwohner 2025','Mietpreis (70%-Q)', 'Baulandpreis aktuell (mittlere Lage)', 'Rating'])
